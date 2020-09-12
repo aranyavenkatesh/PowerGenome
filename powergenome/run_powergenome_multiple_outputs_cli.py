@@ -502,6 +502,10 @@ def main():
                         include_index=False,
                     )
 
+            ces=None 
+            #initialized ces for the --no-transmission case, 
+            #since ces is not defined if args.transmission is False, 
+            #but is needed for make_genx_settings_file
             if args.transmission:
                 # if not model_regions_gdf:
                 #     if args.gens is False:

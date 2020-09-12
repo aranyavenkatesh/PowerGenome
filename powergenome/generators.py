@@ -44,6 +44,7 @@ from powergenome.util import (
 from scipy.stats import iqr
 from sklearn import cluster, preprocessing
 from xlrd import XLRDError
+from datetime import datetime as dt
 
 logger = logging.getLogger(__name__)
 
@@ -698,7 +699,6 @@ def supplement_generator_860_data(
         logger.warning(
             f"Capacity changed from {initial_capacity} \nto \n{merged_capacity}"
         )
-
     return gens_860_model
 
 
@@ -1080,6 +1080,10 @@ def group_units(df, settings):
     by = ["plant_id_eia", "unit_id_pudl"]
     # add a unit code (plant plus generator code) in cases where one doesn't exist
     df_copy = df.reset_index()
+    #where operating date is not reported, assign operating date as the earliest of data years picked for clustering
+    df_copy.loc[:,"operating_date_fillna"] = df_copy.loc[:,"operating_date"].fillna(dt(min(settings["data_years"]),1,1))
+    #convert operating date to unix time to use in calculate the "mean" operating date
+    df_copy.loc[:,"operating_date_timestamp"] = df_copy.loc[:,"operating_date_fillna"].apply(lambda x: int(x.strftime('%s'))) 
 
     # All units should have the same heat rate so taking the mean will just keep the
     # same value.
@@ -1088,8 +1092,14 @@ def group_units(df, settings):
             settings["capacity_col"]: "sum",
             "minimum_load_mw": "sum",
             "heat_rate_mmbtu_mwh": "mean",
+            "operating_date_timestamp": "mean",
+            "retirement_year": "mean",
         }
     )
+    #calculate mean operating year for each cluster
+    grouped_units.loc[:,"operating_year"] = grouped_units.loc[:,"operating_date_timestamp"].apply(lambda x: dt.fromtimestamp(int(x)).year)
+    #drop the column operating_date_timestamp from final dataframe returned
+    grouped_units.drop(["operating_date_timestamp"],axis=1, inplace=True)
     grouped_units = grouped_units.replace([np.inf, -np.inf], np.nan)
     grouped_units = grouped_units.fillna(grouped_units.mean())
 
@@ -1137,8 +1147,14 @@ def calc_unit_cluster_values(df, settings, technology=None):
             settings["capacity_col"]: "mean",
             "minimum_load_mw": "mean",
             "heat_rate_mmbtu_mwh": wm,
+            "operating_year": wm,
+            "retirement_year": wm,
         }
     )
+    df_values = df_values.astype({"operating_year": int})
+    df_values = df_values.astype({"retirement_year": int})
+
+
     if df_values["heat_rate_mmbtu_mwh"].isnull().values.any():
         print(df)
         print(df_values)
@@ -2011,6 +2027,7 @@ class GeneratorClusters:
             .pipe(label_small_hydro, self.settings, by=["plant_id_eia"])
             .pipe(group_technologies, self.settings)
         )
+
         self.gens_860_model = self.gens_860_model.pipe(
             modify_cc_prime_mover_code, self.gens_860_model
         )
@@ -2153,7 +2170,9 @@ class GeneratorClusters:
         for _, df in region_tech_grouped:
             region, tech = _
             grouped = group_units(df, self.settings)
-
+            cols_for_clustering = grouped.columns
+            cols_for_clustering = cols_for_clustering.drop('retirement_year') #remove retirement year from clustering
+    
             # This is bad. Should be setting up a dictionary of objects that picks the
             # correct clustering method. Can't keep doing if statements as the number of
             # methods grows. CHANGE LATER.
@@ -2161,7 +2180,7 @@ class GeneratorClusters:
                 if num_clusters[region][tech] > 0:
                     clusters = cluster.KMeans(
                         n_clusters=num_clusters[region][tech], random_state=6
-                    ).fit(preprocessing.StandardScaler().fit_transform(grouped))
+                    ).fit(preprocessing.StandardScaler().fit_transform(grouped[cols_for_clustering]))
 
                     grouped["cluster"] = (
                         clusters.labels_ + 1

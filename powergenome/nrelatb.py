@@ -695,6 +695,27 @@ def atb_new_generators(atb_costs, atb_hr, settings):
                 op_value,
             )
 
+    #workaround to use the same retirement ages as the existing/planned generators for the new ATB generators, 
+    #if lifetime column is specified in the settings file
+    if "lifetime" in settings["generator_columns"]:
+        retirement_ages = settings["retirement_ages"]
+        techs = settings["eia_atb_tech_map"]
+        techs = {eia: atb_costs_df.split("_")[0] for eia, atb_costs_df in techs.items()}
+        #drop the peaker key specifically, since there's no retirement age mapped to this value in the settings file, defaults to Natural Gas
+        techs.pop('Peaker', None)
+        #change key Batteries to Battery to match keys in retirement_ages and eia_atb_tech_map
+        techs['Batteries'] = techs.pop('Battery')
+        #invert the dictionary
+        inv_techs = {v: k for k, v in techs.items()}
+        #create a new column to map the atb technology to eia technology
+        new_gen_df.loc[:,"tech_resource"] = new_gen_df.technology.apply(lambda x: inv_techs[x.split('_')[0]])
+
+        for tech, life in retirement_ages.items():
+            new_gen_df.loc[
+                new_gen_df.tech_resource == tech,"lifetime"] = life
+        #drop the newly created column that maps atb technology to the eia technology
+        new_gen_df.drop(columns=["tech_resource"], inplace=True)
+
     new_gen_df["technology"] = (
         new_gen_df["technology"]
         + "_"
@@ -762,6 +783,7 @@ def atb_new_generators(atb_costs, atb_hr, settings):
         "cap_recovery_years",
         "waccnomtech",
         "regional_cost_multiplier",
+        "lifetime"
     ]
 
     regional_cost_multipliers = pd.read_csv(
