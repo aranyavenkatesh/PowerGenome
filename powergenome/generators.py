@@ -2322,8 +2322,9 @@ class GeneratorClusters:
                         "heat_rate_mmbtu_mwh",
                         self.settings["capacity_col"],
                     ]
+                    num_clusters_modified = min(num_clusters[region][tech], len(grouped))
                     clusters = cluster.KMeans(
-                        n_clusters=num_clusters[region][tech], random_state=6
+                        n_clusters=num_clusters_modified, random_state=6
                     ).fit(
                         preprocessing.StandardScaler().fit_transform(
                             grouped[cluster_cols]
