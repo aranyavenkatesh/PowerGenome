@@ -298,8 +298,9 @@ def atb_fixed_var_om_existing(results, atb_costs_df, atb_hr_df, settings):
 
             if "Combined Cycle" in eia_tech:
                 # https://www.eia.gov/analysis/studies/powerplants/generationcost/pdf/full_report.pdf
+                _df.fillna(0, inplace=True)
                 plant_capacity = _df[settings["capacity_col"]].sum()
-                assert plant_capacity > 0
+                #assert plant_capacity > 0
                 if plant_capacity < 500:
                     fixed = 15.62 * 1000
                     variable = 4.31
@@ -369,7 +370,7 @@ def atb_fixed_var_om_existing(results, atb_costs_df, atb_hr_df, settings):
             if "Natural Gas Steam Turbine" in eia_tech:
                 # https://www.eia.gov/analysis/studies/powerplants/generationcost/pdf/full_report.pdf
                 plant_capacity = _df[settings["capacity_col"]].sum()
-                assert plant_capacity > 0
+                #assert plant_capacity > 0
                 if plant_capacity < 500:
                     annual_capex = 18.86 * 1000
                     fixed = annual_capex + 29.73 * 1000
@@ -390,7 +391,7 @@ def atb_fixed_var_om_existing(results, atb_costs_df, atb_hr_df, settings):
             if "Coal" in eia_tech:
 
                 plant_capacity = _df[settings["capacity_col"]].sum()
-                assert plant_capacity > 0
+                #assert plant_capacity > 0
 
                 atb_var_om_mwh = (
                     atb_costs_df.query(
@@ -464,12 +465,13 @@ def atb_fixed_var_om_existing(results, atb_costs_df, atb_hr_df, settings):
 
     mod_results = pd.concat(df_list, ignore_index=True)
     # mod_results = mod_results.sort_values(["model_region", "technology", "cluster"])
-    mod_results.loc[:, "Fixed_OM_cost_per_MWyr"] = mod_results.loc[
-        :, "Fixed_OM_cost_per_MWyr"
-    ].astype(int)
-    mod_results.loc[:, "Var_OM_cost_per_MWh"] = mod_results.loc[
-        :, "Var_OM_cost_per_MWh"
-    ].round(1)
+    
+    #mod_results.loc[:, "Fixed_OM_cost_per_MWyr"] = mod_results.loc[
+    #    :, "Fixed_OM_cost_per_MWyr"
+    #].astype(int)
+    #mod_results.loc[:, "Var_OM_cost_per_MWh"] = mod_results.loc[
+    #    :, "Var_OM_cost_per_MWh"
+    #].round(1)
 
     return mod_results
 
@@ -779,6 +781,27 @@ def atb_new_generators(atb_costs, atb_hr, settings):
                 op_value,
             )
 
+    #workaround to use the same retirement ages as the existing/planned generators for the new ATB generators, 
+    #if lifetime column is specified in the settings file
+    if "lifetime" in settings["generator_columns"]:
+        retirement_ages = settings["retirement_ages"]
+        techs = settings["eia_atb_tech_map"]
+        techs = {eia: atb_costs_df.split("_")[0] for eia, atb_costs_df in techs.items()}
+        #drop the peaker key specifically, since there's no retirement age mapped to this value in the settings file, defaults to Natural Gas
+        techs.pop('Peaker', None)
+        #change key Batteries to Battery to match keys in retirement_ages and eia_atb_tech_map
+        techs['Batteries'] = techs.pop('Battery')
+        #invert the dictionary
+        inv_techs = {v: k for k, v in techs.items()}
+        #create a new column to map the atb technology to eia technology
+        new_gen_df.loc[:,"tech_resource"] = new_gen_df.technology.apply(lambda x: inv_techs[x.split('_')[0]])
+
+        for tech, life in retirement_ages.items():
+            new_gen_df.loc[
+                new_gen_df.tech_resource == tech,"lifetime"] = life
+        #drop the newly created column that maps atb technology to the eia technology
+        new_gen_df.drop(columns=["tech_resource"], inplace=True)
+
     new_gen_df["technology"] = (
         new_gen_df[["technology", "tech_detail", "cost_case"]]
         .astype(str)
@@ -819,6 +842,7 @@ def atb_new_generators(atb_costs, atb_hr, settings):
         "Cap_size",
         "cap_recovery_years",
         "waccnomtech",
+        "lifetime",
     ]
     new_gen_df = new_gen_df[keep_cols]
     # Set no capacity limit on new resources that aren't renewables.
