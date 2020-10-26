@@ -51,6 +51,7 @@ from powergenome.util import (
 from scipy.stats import iqr
 from sklearn import cluster, preprocessing
 from xlrd import XLRDError
+from datetime import datetime as dt
 
 logger = logging.getLogger(__name__)
 
@@ -1105,6 +1106,12 @@ def group_units(df, settings):
     by = ["plant_id_eia", "unit_id_pudl"]
     # add a unit code (plant plus generator code) in cases where one doesn't exist
     df_copy = df.reset_index()
+    #where operating date is not reported, assign operating date as the earliest of data years picked for clustering
+    df_copy.loc[:,"operating_date_fillna"] = df_copy.loc[:,"operating_date"].fillna(dt(min(settings["data_years"]),1,1))
+    df_copy.loc[ df_copy.loc[:,"operating_date"]==0,"operating_date_fillna"] = dt(min(settings["data_years"]),1,1)
+
+    #convert operating date to unix time to use in calculate the "mean" operating date
+    df_copy.loc[:,"operating_date_timestamp"] = df_copy.loc[:,"operating_date_fillna"].apply(lambda x: int(x.strftime('%s'))) 
 
     # All units should have the same heat rate so taking the mean will just keep the
     # same value.
@@ -1115,8 +1122,14 @@ def group_units(df, settings):
             "heat_rate_mmbtu_mwh": "mean",
             "Fixed_OM_cost_per_MWyr": "mean",
             "Var_OM_cost_per_MWh": "mean",
+            "operating_date_timestamp": "mean",
+            "retirement_year": "mean",
         }
     )
+    #calculate mean operating year for each cluster
+    grouped_units.loc[:,"operating_year"] = grouped_units.loc[:,"operating_date_timestamp"].apply(lambda x: dt.fromtimestamp(int(x)).year)
+    #drop the column operating_date_timestamp from final dataframe returned
+    grouped_units.drop(["operating_date_timestamp"],axis=1, inplace=True)
     grouped_units = grouped_units.replace([np.inf, -np.inf], np.nan)
     grouped_units = grouped_units.fillna(grouped_units.mean())
 
@@ -1166,8 +1179,13 @@ def calc_unit_cluster_values(df, settings, technology=None):
             "heat_rate_mmbtu_mwh": wm,
             "Fixed_OM_cost_per_MWyr": wm,
             "Var_OM_cost_per_MWh": wm,
+            "operating_year": wm,
+            "retirement_year": wm,
         }
     )
+    df_values = df_values.astype({"operating_year": int})
+    df_values = df_values.astype({"retirement_year": int})
+
     if df_values["heat_rate_mmbtu_mwh"].isnull().values.any():
         print(df)
         print(df_values)
@@ -2070,7 +2088,12 @@ class GeneratorClusters:
             dr_capacity = demand_response_resource_capacity(
                 dr_profile, resource, self.settings
             )
-            dr_capacity_scenario = dr_capacity.squeeze()
+            # This is to solve a bug with only one region. Need to come back and solve
+            # in a better fashion.
+            if len(dr_capacity) > 1:
+                dr_capacity_scenario = dr_capacity.squeeze()
+            else:
+                dr_capacity_scenario = dr_capacity
             _df["Existing_Cap_MW"] = _df["region"].map(dr_capacity_scenario)
 
             if not parameters.get("parameter_values"):
@@ -2297,6 +2320,7 @@ class GeneratorClusters:
                         # "Var_OM_cost_per_MWh",
                         # "minimum_load_mw",
                         "heat_rate_mmbtu_mwh",
+                        self.settings["capacity_col"],
                     ]
                     clusters = cluster.KMeans(
                         n_clusters=num_clusters[region][tech], random_state=6
