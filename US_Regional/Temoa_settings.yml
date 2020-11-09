@@ -893,9 +893,19 @@ renewables_clusters:
   
   - region: WECC_CA
     technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
+  - region: WECC_CA
+    technology: utilitypv
     max_clusters: 3
     max_lcoe: 250
     cap_multiplier: 0.2
+  - region: WECC_N
+    technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
   - region: WECC_N
     technology: utilitypv
     max_clusters: 3
@@ -903,9 +913,19 @@ renewables_clusters:
     cap_multiplier: 0.2
   - region: WECC_S
     technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
+  - region: WECC_S
+    technology: utilitypv
     max_clusters: 3
     max_lcoe: 250
     cap_multiplier: 0.2
+  - region: ERCOT
+    technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
   - region: ERCOT
     technology: utilitypv
     max_clusters: 3
@@ -913,9 +933,19 @@ renewables_clusters:
     cap_multiplier: 0.2
   - region: MIS_SPP
     technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
+  - region: MIS_SPP
+    technology: utilitypv
     max_clusters: 3
     max_lcoe: 250
     cap_multiplier: 0.2
+  - region: MIS_N
+    technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
   - region: MIS_N
     technology: utilitypv
     max_clusters: 3
@@ -923,19 +953,35 @@ renewables_clusters:
     cap_multiplier: 0.2
   - region: SOUTH_EAST
     technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
+  - region: SOUTH_EAST
+    technology: utilitypv
     max_clusters: 3
     max_lcoe: 250
     cap_multiplier: 0.2
+  - region: PJM
+    technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
   - region: PJM
     technology: utilitypv
     max_clusters: 3
     max_lcoe: 250
     cap_multiplier: 0.2
   - region: NY_NE
+    technology: landbasedwind
+    max_clusters: 2
+    max_lcoe: 110
+    min_capacity: 25000
+  - region: NY_NE
     technology: utilitypv
     max_clusters: 3
     max_lcoe: 250
     cap_multiplier: 0.2
+
 
 # How much of the theoretical
 wind_pv_fraction_developable: 0.5
