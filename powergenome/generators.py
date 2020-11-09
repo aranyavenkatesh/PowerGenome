@@ -2321,6 +2321,7 @@ class GeneratorClusters:
                         # "minimum_load_mw",
                         "heat_rate_mmbtu_mwh",
                         self.settings["capacity_col"],
+                        "operating_year"
                     ]
                     num_clusters_modified = min(num_clusters[region][tech], len(grouped))
                     clusters = cluster.KMeans(
