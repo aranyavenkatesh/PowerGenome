@@ -175,7 +175,7 @@ def startup_fuel(df, settings):
     """
     df["Start_fuel_MMBTU_per_MW"] = 0
     for eia_tech, fuel_use in (settings.get("startup_fuel_use") or {}).items():
-        atb_tech = settings["eia_atb_tech_map"][eia_tech].split("_")[0]
+        atb_tech = settings["eia_atb_tech_map"][eia_tech]
 
         df.loc[df["technology"] == eia_tech, "Start_fuel_MMBTU_per_MW"] = fuel_use
         df.loc[
@@ -241,7 +241,7 @@ def startup_nonfuel_costs(df, settings):
         df.loc[
             df["technology"].str.contains(new_tech), "Start_cost_per_MW"
         ] = total_startup_costs
-    df.loc[:, "Start_cost_per_MW"] = df.loc[:, "Start_cost_per_MW"].round(0)
+    df.loc[:, "Start_cost_per_MW"] = df.loc[:, "Start_cost_per_MW"]
 
     # df.loc[df["technology"].str.contains("Nuclear"), "Start_cost_per_MW"] = "FILL VALUE"
 
@@ -546,7 +546,7 @@ def label_small_hydro(df, settings, by=["plant_id_eia"]):
     if "report_date" not in by and "report_date" in df.columns:
         # by.append("report_date")
         logger.warning("'report_date' is in the df but not used in the groupby")
-    region_agg_map = reverse_dict_of_lists(settings["region_aggregations"])
+    region_agg_map = reverse_dict_of_lists(settings.get("region_aggregations", {}))
     keep_regions = [
         x
         for x in settings["model_regions"] + list(region_agg_map)
@@ -1228,7 +1228,7 @@ def add_genx_model_tags(df, settings):
     dataframe
         The original generator cluster results with new columns for each model tag.
     """
-    ignored = r"\s+|_"
+    ignored = r"_"
     technology = df["technology"].str.replace(ignored, "")
     # Create a new dataframe with the same index
     default = settings.get("default_model_tag", 0)
@@ -2202,9 +2202,18 @@ class GeneratorClusters:
             self.prime_mover_hr_map
         )
 
+        self.units_model.loc[
+            self.units_model.heat_rate_mmbtu_mwh > 35, "heat_rate_mmbtu_mwh"
+            ] = self.units_model.loc[
+            self.units_model.heat_rate_mmbtu_mwh > 35
+            ].index.map(
+            self.prime_mover_hr_map
+        )
+
         # Set negative heat rates to nan
         self.units_model.loc[
-            self.units_model.heat_rate_mmbtu_mwh < 0, "heat_rate_mmbtu_mwh"
+            (self.units_model.heat_rate_mmbtu_mwh < 0)
+            | (self.units_model.heat_rate_mmbtu_mwh > 35), "heat_rate_mmbtu_mwh"
         ] = np.nan
 
         # Fill any null heat rate values for each tech
@@ -2438,7 +2447,7 @@ class GeneratorClusters:
 
         # Round Cap_size to prevent GenX error.
         self.results = self.results.round(3)
-        self.results["Cap_size"] = self.results["Cap_size"].round(2)
+        self.results["Cap_size"] = self.results["Cap_size"]
         self.results["Existing_Cap_MW"] = self.results.Cap_size * self.results.num_units
         self.results["unmodified_existing_cap_mw"] = (
             self.results["unmodified_cap_size"] * self.results["num_units"]
@@ -2493,8 +2502,8 @@ class GeneratorClusters:
             if group.profiles is None:
                 # Resource group has no profiles
                 continue
-            if row.region in self.settings["region_aggregations"]:
-                ipm_regions = self.settings["region_aggregations"][row.region]
+            if row.region in self.settings.get("region_aggregations", {}):
+                ipm_regions = self.settings.get("region_aggregations", {})[row.region]
             else:
                 ipm_regions = [row.region]
             metadata = group.metadata.read()
@@ -2557,10 +2566,10 @@ class GeneratorClusters:
         )
 
         self.all_resources = self.all_resources.round(3)
-        self.all_resources["Cap_size"] = self.all_resources["Cap_size"].round(2)
+        self.all_resources["Cap_size"] = self.all_resources["Cap_size"]
         self.all_resources["Heat_rate_MMBTU_per_MWh"] = self.all_resources[
             "Heat_rate_MMBTU_per_MWh"
-        ].round(2)
+        ]
 
         # Set Min_power of wind/solar to 0
         self.all_resources.loc[self.all_resources["DISP"] == 1, "Min_power"] = 0
