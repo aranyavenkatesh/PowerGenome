@@ -465,12 +465,12 @@ def atb_fixed_var_om_existing(results, atb_costs_df, atb_hr_df, settings):
 
     mod_results = pd.concat(df_list, ignore_index=True)
     # mod_results = mod_results.sort_values(["model_region", "technology", "cluster"])
-    mod_results.loc[:, "Fixed_OM_cost_per_MWyr"] = mod_results.loc[
-        :, "Fixed_OM_cost_per_MWyr"
-    ].astype(int)
-    mod_results.loc[:, "Var_OM_cost_per_MWh"] = mod_results.loc[
-        :, "Var_OM_cost_per_MWh"
-    ]
+    #mod_results.loc[:, "Fixed_OM_cost_per_MWyr"] = mod_results.loc[
+    #    :, "Fixed_OM_cost_per_MWyr"
+    #].astype(int)
+    #mod_results.loc[:, "Var_OM_cost_per_MWh"] = mod_results.loc[
+    #    :, "Var_OM_cost_per_MWh"
+    #]
 
 
     return mod_results
