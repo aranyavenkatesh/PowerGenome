@@ -1,4 +1,4 @@
-﻿technology,planning_year,capex,capex_mwh,o_m_fixed_mw,o_m_fixed_mwh,o_m_variable_mwh,waccnomtech,dollar_year,heat_rate,notes
+﻿technology,planning_year,capex_mw,capex_mwh,fixed_o_m_mw,fixed_o_m_mwh,variable_o_m_mwh,wacc_nominal,dollar_year,heat_rate,notes
 Nuclear_mid,2020,6530277.053,0,100889,0,2.314,0.07138931,2017,10.461,"taken from PUDL_database, NREL ATB, mid-market scenarios check  dollar_year"
 Nuclear_mid,2025,6328973.792,0,100889,0,2.314,0.07138931,2017,10.461,"taken from PUDL_database, NREL ATB, mid-market scenarios check  dollar_year"
 Nuclear_mid,2030,6179955.32,0,100889,0,2.314,0.07138931,2017,10.461,"taken from PUDL_database, NREL ATB, mid-market scenarios check  dollar_year"
