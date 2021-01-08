@@ -556,7 +556,10 @@ def regional_capex_multiplier(df, region, region_map, tech_map, regional_multipl
             full_atb_tech = df.loc[
                 df["technology"].str.contains(atb_tech).idxmax(), "technology"
             ]
-            tech_multiplier_map[full_atb_tech] = tech_multiplier.at[eia_tech]
+            try:
+                tech_multiplier_map[full_atb_tech] = tech_multiplier.at[eia_tech]
+            except:
+                tech_multiplier_map[full_atb_tech] = avg_multiplier #for technology/region combinations that do not exist in the EIA regional cost multipliers.csv file
 
     df["Inv_cost_per_MWyr"] *= df["technology"].map(tech_multiplier_map)
     df["Inv_cost_per_MWhyr"] *= df["technology"].map(tech_multiplier_map)
