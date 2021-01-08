@@ -1,0 +1,6 @@
+SELECT basis_year, capex, capex_mwh, o_m_fixed_mw, o_m_fixed_mwh, o_m_variable_mwh, waccnomtech, cf FROM technology_costs_nrelatb
+	WHERE key=='MM2CSClass55' AND
+	cap_recovery_years==20 AND 
+	cost_case=='Mid' AND
+	financial_case=='Market' AND
+	basis_year in (2020, 2025, 2030, 2035, 2040, 2045, 2050)
