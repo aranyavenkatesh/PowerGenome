@@ -39,6 +39,7 @@ from powergenome.nrelatb import atb_fixed_var_om_existing
 from powergenome.external_data import make_generator_variability
 from powergenome.util import (
     build_scenario_settings,
+    check_settings,
     init_pudl_connection,
     load_settings,
     remove_fuel_scenario_name,
@@ -157,6 +158,7 @@ def main():
 
     logger.info("Initiating PUDL connections")
     pudl_engine, pudl_out = init_pudl_connection(freq="YS")
+    check_settings(settings, pudl_engine)
 
     # Make sure everything in model_regions is either an aggregate region
     # or an IPM region. Will need to change this once we start using non-IPM
@@ -358,8 +360,6 @@ def main():
                         + gen_clusters["Resource"]
                         + "_"
                         + gen_clusters["cluster"].astype(str)
-                        + "_"
-                        + gen_clusters["R_ID"].astype(str)
                     )
                     gens = calculate_partial_CES_values(
                         gen_clusters, fuels, _settings
@@ -395,7 +395,7 @@ def main():
                 (
                     reduced_resource_profile,
                     reduced_load_profile,
-                    long_duration_storage,
+                    time_series_mapping,
                 ) = reduce_time_domain(gen_variability, load, _settings)
                 write_results_file(
                     df=reduced_load_profile,
@@ -409,11 +409,11 @@ def main():
                     file_name="Generators_variability.csv",
                     include_index=True,
                 )
-                if long_duration_storage is not None:
+                if time_series_mapping is not None:
                     write_results_file(
-                        df=long_duration_storage,
+                        df=time_series_mapping,
                         folder=case_folder,
-                        file_name="Long_Duration_Storage.csv",
+                        file_name="time_series_mapping.csv",
                         include_index=False,
                     )
 

@@ -1,5 +1,7 @@
 import collections
 from copy import deepcopy
+import itertools
+import logging
 import subprocess
 from typing import Dict, Tuple, Union
 
@@ -15,8 +17,10 @@ from pathlib import Path
 
 from powergenome.params import SETTINGS
 
+logger = logging.getLogger(__name__)
 
-def load_settings(path):
+
+def load_settings(path: Union[str, Path]) -> dict:
 
     with open(path, "r") as f:
         #     settings = yaml.safe_load(f)
@@ -26,8 +30,80 @@ def load_settings(path):
     return settings
 
 
-def init_pudl_connection(freq="YS"):
+def check_settings(settings: dict, pudl_engine: sa.engine) -> None:
+    """Check for user errors in the settings file.
 
+    The YAML settings file is loaded as a dictionary object. It has many different parts
+    that need to have consistent values. This function checks a few (but not all!) of
+    the parameters for common errors or misspelled words.
+
+    Parameters
+    ----------
+    settings : dict
+        Parameters and values from the YAML settings file.
+    pudl_engine : sa.engine
+        Connection to the PUDL sqlite database.
+    """
+
+    ipm_region_list = pd.read_sql_table("regions_entity_epaipm", pudl_engine)[
+        "region_id_epaipm"
+    ].to_list()
+
+    cost_mult_regions = list(
+        itertools.chain.from_iterable(settings["cost_multiplier_region_map"].values())
+    )
+
+    aeo_fuel_regions = list(
+        itertools.chain.from_iterable(settings["aeo_fuel_region_map"].values())
+    )
+
+    for agg_region, ipm_regions in (settings.get("region_aggregations") or {}).items():
+        for ipm_region in ipm_regions:
+            if ipm_region not in ipm_region_list:
+                s = f"""
+    *****************************
+    There is no IPM region {ipm_region}, which is listed in {agg_region}"
+    *****************************
+    """
+                logger.warning(s)
+
+    for model_region in settings["model_regions"]:
+        if model_region not in cost_mult_regions:
+            s = f"""
+    *****************************
+    The model region {model_region} is not included in the settings parameter `cost_multiplier_region_map`"
+    *****************************
+            """
+            logger.warning(s)
+
+        if model_region not in aeo_fuel_regions:
+            s = f"""
+    *****************************
+    The model region {model_region} is not included in the settings parameter `aeo_fuel_region_map`"
+    *****************************
+            """
+            logger.warning(s)
+
+
+def init_pudl_connection(
+    freq: str = "YS",
+) -> Tuple[sa.engine.base.Engine, pudl.output.pudltabl.PudlTabl]:
+    """Initiate a connection object to the sqlite PUDL database and create a pudl
+    object that can quickly access parts of the database.
+
+    Parameters
+    ----------
+    freq : str, optional
+        The time frequency that data should be averaged over in the `pudl_out` object,
+        by default "YS" (annual data).
+
+    Returns
+    -------
+    sa.Engine, pudl.pudltabl
+        A sqlalchemy engine for connecting to the PUDL database, and a pudl PudlTabl
+        object for quickly accessing parts of the database. `pudl_out` is used
+        to access unit heat rates.
+    """
     pudl_engine = sa.create_engine(
         SETTINGS["PUDL_DB"]
     )  # pudl.init.connect_db(SETTINGS)
@@ -109,15 +185,6 @@ def download_save(url: str, save_path: Union[str, Path]):
     r = requests.get(url)
     save_path.parent.mkdir(parents=True, exist_ok=True)
     save_path.write_bytes(r.content)
-
-
-def shift_wrap_profiles(df, offset):
-    "Shift hours to a local offset and append first rows to end"
-
-    wrap_rows = df.iloc[:offset, :]
-
-    shifted_wrapped_df = pd.concat([df.iloc[offset:, :], wrap_rows], ignore_index=True)
-    return shifted_wrapped_df
 
 
 def update_dictionary(d: dict, u: dict) -> dict:
@@ -366,9 +433,9 @@ def build_scenario_settings(
                 # key is the category e.g. ccs_capex, case_value_dict is p1: mid
                 try:
                     case_value = case_value_dict[case_id]
-                    new_parameter = planning_year_settings_management[category][
-                        case_value
-                    ] or {}
+                    new_parameter = (
+                        planning_year_settings_management[category][case_value] or {}
+                    )
 
                     try:
                         settings_keys = list(flatten(new_parameter).keys())
