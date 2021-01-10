@@ -346,11 +346,17 @@ def atb_fixed_var_om_existing(
         "Fixed_OM_cost_per_MWyr" and "Var_OM_cost_per_MWh"
     """
     logger.info("Adding fixed and variable O&M for existing plants")
-    techs = settings["eia_atb_tech_map"]
+    techs_s = settings["eia_atb_tech_map"]
     existing_year = settings["atb_existing_year"]
 
     # ATB string is <technology>_<tech_detail>
-    techs = {eia: atb.split("_") for eia, atb in techs.items()}
+    #techs = {eia: atb.split("_") for eia, atb in techs.items()}
+    techs = {}
+    for eia, atb_costs_df in techs_s.items():
+        if type(atb_costs_df)==list:
+            techs[eia] = atb_costs_df[0].split("_")
+        else:
+            techs[eia] = atb_costs_df.split("_")
     df_list = []
     grouped_results = results.reset_index().groupby(
         ["plant_id_eia", "technology"], as_index=False
@@ -975,14 +981,20 @@ def atb_new_generators(atb_costs, atb_hr, settings):
     #if lifetime column is specified in the settings file
     if "lifetime" in settings["generator_columns"]:
         retirement_ages = settings["retirement_ages"]
-        techs = settings["eia_atb_tech_map"]
-        techs = {eia: atb_costs_df.split("_")[0] for eia, atb_costs_df in techs.items()}
+        techs_s = settings["eia_atb_tech_map"]
+        #techs = {eia: atb_costs_df.split("_")[0] for eia, atb_costs_df in techs.items()}
+        techs = {}
+        for eia, atb_costs_df in techs_s.items():
+            if type(atb_costs_df)==list:
+                techs[eia] = [x.split("_")[0] for x in atb_costs_df]
+            else:
+                techs[eia] = [atb_costs_df.split("_")[0]]
         #drop the peaker key specifically, since there's no retirement age mapped to this value in the settings file, defaults to Natural Gas
         techs.pop('Peaker', None)
         #change key Batteries to Battery to match keys in retirement_ages and eia_atb_tech_map
         techs['Batteries'] = techs.pop('Battery')
         #invert the dictionary
-        inv_techs = {v: k for k, v in techs.items()}
+        inv_techs = reverse_dict_of_lists(techs) #{v: k for k, v in techs.items()}
         #create a new column to map the atb technology to eia technology
         new_gen_df.loc[:,"tech_resource"] = new_gen_df.technology.apply(lambda x: inv_techs[x.split('_')[0]])
 
