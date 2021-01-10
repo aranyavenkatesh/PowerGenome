@@ -1,6 +1,32 @@
-SELECT basis_year, capex, capex_mwh, o_m_fixed_mw, o_m_fixed_mwh, o_m_variable_mwh, waccnomtech, cf FROM technology_costs_nrelatb
-	WHERE key=='MM2CSClass55' AND
+SELECT * FROM technology_costs_nrelatb
+	WHERE atb_year =2020 AND
+	technology== 'ResPV' AND
+	(tech_detail=='LosAngeles'  OR
+	tech_detail=='*') AND
 	cap_recovery_years==20 AND 
 	cost_case=='Mid' AND
 	financial_case=='Market' AND
-	basis_year in (2020, 2025, 2030, 2035, 2040, 2045, 2050)
+	basis_year in (2020, 2025, 2030, 2035, 2040, 2045, 2050) AND
+	(parameter='capex_mw' OR 
+	parameter='fixed_o_m_mw' OR
+	parameter='variable_o_m_mwh' OR
+	parameter='wacc_nominal')
+	ORDER BY parameter
+	
+
+SELECT * FROM technology_costs_nrelatb
+	WHERE atb_year =2020 AND
+	technology== 'Geothermal' AND
+	(tech_detail=='HydroFlash'  OR
+	tech_detail=='*') AND
+	cap_recovery_years==20 AND 
+	cost_case=='Mid' AND
+	financial_case=='Market' AND
+	basis_year in (2020, 2025, 2030, 2035, 2040, 2045, 2050) AND
+	(parameter='capex_mw' OR 
+	parameter='fixed_o_m_mw' OR
+	parameter='variable_o_m_mwh' OR
+	parameter='wacc_nominal'  OR
+	parameter='cf')
+	ORDER BY parameter
+	
