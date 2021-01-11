@@ -250,11 +250,11 @@ settings_management:
           ngccccs:
             technology: NaturalGas
             tech_detail: CCCCSAvgCF
-            capex_mw: [mul, 0.85]
+            capex_mw: [mul, 1]
           NGCCS100:
             technology: NaturalGas
             tech_detail: CCS100
-            capex_mw: [mul, 0.85]
+            capex_mw: [mul, 1]
     renewable_capex:
       mid:
         atb_new_gen:
@@ -297,11 +297,11 @@ settings_management:
           ngccccs:
             technology: NaturalGas
             tech_detail: CCCCSAvgCF
-            capex_mw: [mul, 1.2]
+            capex_mw: [mul, 1]
           NGCCS100:
             technology: NaturalGas
             tech_detail: CCS100
-            capex_mw: [mul, 1.2]
+            capex_mw: [mul, 1]
     renewable_capex:
       mid:
         atb_new_gen:
@@ -391,11 +391,11 @@ settings_management:
           ngccccs:
             technology: NaturalGas
             tech_detail: CCCCSAvgCF
-            capex_mw: [mul, 0.8]
+            capex_mw: [mul, 1]
           NGCCS100:
             technology: NaturalGas
             tech_detail: CCS100
-            capex_mw: [mul, 0.8]
+            capex_mw: [mul, 1]
     renewable_capex:
       mid:
         atb_new_gen:
@@ -438,11 +438,11 @@ settings_management:
           ngccccs:
             technology: NaturalGas
             tech_detail: CCCCSAvgCF
-            capex_mw: [mul, 1.15]
+            capex_mw: [mul, 1]
           NGCCS100:
             technology: NaturalGas
             tech_detail: CCS100
-            capex_mw: [mul, 1.15]
+            capex_mw: [mul, 1]
     renewable_capex:
       mid:
         atb_new_gen:
@@ -899,15 +899,13 @@ atb_modifiers:
     technology: NaturalGas
     tech_detail: CTAvgCF
     capex_mw: [mul, 0.76]
-    # Inv_cost_per_MWyr: 0.76
-    Var_OM_cost_per_MWh: [mul, 1.51]
-    Fixed_OM_cost_per_MWyr: [mul, 0.56]
-    Heat_rate_MMBTU_per_MWh: [mul, 0.97]
+    Var_OM_cost_per_MWh: [mul, 0.98]
+    Fixed_OM_cost_per_MWyr: [mul, 0.6]
+    Heat_rate_MMBTU_per_MWh: [mul, 1.04]
   ngcc:
     technology: NaturalGas
     tech_detail: CCAvgCF
     capex_mw: [mul, 0.89]
-    # Inv_cost_per_MWyr: 0.89
     Var_OM_cost_per_MWh: [mul, 0.73]
     Fixed_OM_cost_per_MWyr: [mul, 0.95]
     Heat_rate_MMBTU_per_MWh: [mul, 0.98]
