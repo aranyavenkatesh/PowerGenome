@@ -136,35 +136,35 @@ transmission_investment_cost:
   use_total: true
   spur:
     capex_mw_mile:
-      CA : 4000 
-      NW  : 4000
-      SW  : 4000
-      TX : 4000
-      N_CEN : 4000
-      CEN : 4000
-      SE  : 4000
-      MID_AT : 4000
-      NE : 4000
+      CA: 9458
+      NW: 4203
+      SW: 4203
+      TX: 4203
+      NE: 9458
+      SE: 4096
+      MID_AT: 9458
+      N_CEN: 4203
+      CEN: 9458
     wacc: 0.069
     investment_years: 60
   offshore_spur: 
-    # If missing, NREL ATB capex_mw_mile is used
+    # If missing NREL ATB capex_mw_mile is used
     capex_mw_mile:
     wacc: 0.069
     investment_years: 60
   tx:
     capex_mw_mile:
-      CA : 1500 
-      NW  : 1500
-      SW  : 1500
-      TX : 1500
-      N_CEN : 1500
-      CEN : 1500
-      SE  : 1500
-      MID_AT : 1500
-      NE : 1500
-    wacc: 0.069
-    investment_years: 60
+      CA: 3274
+      NW: 1455
+      SW: 1455
+      TX: 1455
+      NE: 2964
+      SE: 1131
+      MID_AT: 1886
+      N_CEN: 970
+      CEN: 1886
+    wacc: 0.00000000001 #modified this to get total investment costs $/MW instead of $/MW-year
+    investment_years: 1 #modified this to get total investment costs $/MW instead of $/MW-year
 
 # Percent expansion in planning period above and beyond existing transmission
 tx_expansion_per_period: 1.0
@@ -533,8 +533,9 @@ data_years:
 
 target_usd_year: 2018
 
-# used for shifting IPM demand profiles, which are in PST
-target_region_pst_offset: -1
+# HOURS OFFSET FROM UTC
+# All time profile data are stored in UTC. Provide an offset for the model timezone.
+utc_offset: -5
 
 # CAPACITY TYPE
 capacity_col: winter_capacity_mw
@@ -576,8 +577,8 @@ region_aggregations:
   NW:   [WECC_ID, WECC_MT, WECC_PNW, WECC_WY]
   SW:   [WECC_AZ, WECC_CO, NWM, NWNV, SWNV, WECC_UT]
   TX:  [ERC_PHDL, ERC_REST, ERC_WEST]
-  N_CEN:  [MIS_AMSO, MIS_AR, MIS_LA, MIS_MO, MIS_WOTA, S_D_AECI, SPP_N, SPP_NEBR, SPP_SPS, SPP_WAUE, SPP_WEST]
-  CEN:  [MIS_IA, MIS_IL, MIS_INKY, MIS_LMI, MIS_MAPP, MIS_MIDA, MIS_MNWI, MIS_WUMS, PJM_COMD]
+  CEN:  [MIS_AMSO, MIS_AR, MIS_LA, MIS_MO, MIS_WOTA, S_D_AECI, SPP_N, SPP_NEBR, SPP_SPS, SPP_WAUE, SPP_WEST]
+  N_CEN:  [MIS_IA, MIS_IL, MIS_INKY, MIS_LMI, MIS_MAPP, MIS_MIDA, MIS_MNWI, MIS_WUMS, PJM_COMD]
   SE:   [FRCC, MIS_D_MS, S_C_KY, S_C_TVA, S_SOU, S_VACA]
   MID_AT:  [PJM_AP, PJM_ATSI, PJM_Dom, PJM_EMAC, PJM_PENE, PJM_SMAC, PJM_West, PJM_WMAC]
   NE:  [NENG_CT, NENG_ME, NENGREST, NY_Z_A, NY_Z_B, NY_Z_C&E, NY_Z_D, NY_Z_F, NY_Z_G-I, NY_Z_J, NY_Z_K]
