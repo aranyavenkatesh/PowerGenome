@@ -1,0 +1,7 @@
+﻿region,technology,cluster,spur_miles,max_capacity
+US,NaturalGas_CCCCS,,20,-1
+US,NaturalGas_CCAvgCF,,0,-1
+US,NaturalGas_CT,,0,-1
+US,Battery,,0,-1
+US,Nuclear,,50,-1
+US,NaturalGas_CCS100,,20,-1
