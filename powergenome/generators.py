@@ -472,7 +472,7 @@ def label_retirement_year(
         logger.info("Changing retirement dates based on settings file")
         model_year = settings["model_year"]
         start_ret_cap = df.loc[
-            df["retirement_year"] <= model_year, settings["capacity_col"]
+            df["retirement_year"] < model_year, settings["capacity_col"]
         ].sum()
         logger.info(f"Starting retirement capacity is {start_ret_cap} MW")
         i = 0
@@ -494,7 +494,7 @@ def label_retirement_year(
             ].sum()
 
         end_ret_cap = df.loc[
-            df["retirement_year"] <= model_year, settings["capacity_col"]
+            df["retirement_year"] < model_year, settings["capacity_col"]
         ].sum()
         logger.info(f"Ending retirement capacity is {end_ret_cap} MW")
         if not end_ret_cap > start_ret_cap:
@@ -2014,6 +2014,7 @@ class GeneratorClusters:
             )
 
             self.eia_860m = load_860m(self.settings)
+
             self.planned_860m = self.eia_860m["planned"]
             self.canceled_860m = self.eia_860m["canceled"]
             self.retired_860m = self.eia_860m["retired"]
@@ -2164,6 +2165,7 @@ class GeneratorClusters:
             .pipe(label_small_hydro, self.settings, by=["plant_id_eia"])
             .pipe(group_technologies, self.settings)
         )
+
         self.gens_860_model = self.gens_860_model.pipe(
             modify_cc_prime_mover_code, self.gens_860_model
         )
@@ -2225,6 +2227,7 @@ class GeneratorClusters:
             | (self.units_model.heat_rate_mmbtu_mwh > 35),
             "heat_rate_mmbtu_mwh",
         ] = np.nan
+
 
         # Fill any null heat rate values for each tech
         for tech in self.units_model["technology_description"]:
@@ -2311,12 +2314,12 @@ class GeneratorClusters:
 
         region_tech_grouped = self.units_model.loc[
             (self.units_model.technology.isin(techs))
-            & (self.units_model.retirement_year > self.settings["model_year"]),
+            & (self.units_model.retirement_year >= self.settings["model_year"]),
             :,
         ].groupby(["model_region", "technology"])
 
         self.retired = self.units_model.loc[
-            self.units_model.retirement_year <= self.settings["model_year"], :
+            self.units_model.retirement_year < self.settings["model_year"], :
         ]
 
         # gens_860 lost the ownership code... refactor this!
@@ -2337,6 +2340,7 @@ class GeneratorClusters:
             region, tech = _
             grouped = group_units(df, self.settings)
 
+
             # This is bad. Should be setting up a dictionary of objects that picks the
             # correct clustering method. Can't keep doing if statements as the number of
             # methods grows. CHANGE LATER.
@@ -2347,8 +2351,8 @@ class GeneratorClusters:
                         # "Var_OM_cost_per_MWh",
                         # "minimum_load_mw",
                         "heat_rate_mmbtu_mwh",
-                        self.settings["capacity_col"],
-                        "operating_year"
+                        self.settings["capacity_col"]#,
+                        #"operating_year"
                     ]
                     num_clusters_modified = min(num_clusters[region][tech], len(grouped))
                     clusters = cluster.KMeans(
