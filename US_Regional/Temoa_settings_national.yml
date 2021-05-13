@@ -15,7 +15,7 @@ model_first_planning_year: [2016, 2021, 2026, 2031, 2036, 2041, 2046]
 
 
 # The location and name of additional input files needed to create outputs
-input_folder: extra_inputs # Subfolder directly below the location of this settings file
+input_folder: extra_inputs_national # Subfolder directly below the location of this settings file
 case_id_description_fn: test_case_id_description.csv # Match the case_id with longer case_name
 scenario_definitions_fn: test_scenario_inputs.csv # Define policy/cost scenarios for each case
 distributed_gen_profiles_fn: #test_dg_profiles.csv # Hourly profiles of distributed gen by region
@@ -53,30 +53,30 @@ demand_weight_factor: 1 # Demand profiles are scaled from 0-1, then scaled up us
 distributed_gen_method:
   #CA_N: capacity
   #CA_S: capacity
-  # US_N: capacity
+  # US: capacity
 
 # Values - either MW or fraction of load - matching the methods listed for each region
 # in "distributed_gen_method". These can be varied by scenario by adding them to an
 # associated scenario in "settings_management".
 distributed_gen_values:
    2020:
-  #   US_N: 1
+  #   US: 1
    2025:
-  #   US_N: 1
+  #   US: 1
    2030:
   #   #CA_N: 6699
   #   #CA_S: 8636
-  #   US_N: 1
+  #   US: 1
    2035:
-  #   US_N: 1
+  #   US: 1
    2040:
-  #   US_N: 1
+  #   US: 1
    2045:
   #   #CA_N: 9788
   #   #CA_S: 12618
-  #   US_N: 1
+  #   US: 1
    2050:
-  #   US_N: 1
+  #   US: 1
 
 # Distribution loss used when subtracting distributed generation from total load.
 avg_distribution_loss: 0.0453
@@ -145,6 +145,7 @@ transmission_investment_cost:
       MID_AT: 9458
       N_CEN: 4203
       CEN: 9458
+      US: 8904
     wacc: 0.069
     investment_years: 60
   offshore_spur: 
@@ -163,6 +164,7 @@ transmission_investment_cost:
       MID_AT: 1886
       N_CEN: 970
       CEN: 1886
+      US: 1457
     wacc: 0.00000000001 #modified this to get total investment costs $/MW instead of $/MW-year
     investment_years: 1 #modified this to get total investment costs $/MW instead of $/MW-year
 
@@ -562,27 +564,29 @@ small_hydro_regions:
 # Can use this to rename (expand)
 
 model_regions:
-  - CA
-  - NW 
-  - SW 
-  - TX 
-  - N_CEN 
-  - CEN
-  - SE
-  - MID_AT
-  - NE
+  #- CA
+  #- NW 
+  #- SW 
+  #- TX 
+  #- N_CEN 
+  #- CEN
+  #- SE
+  #- MID_AT
+  #- NE
+  - US
 
 region_aggregations:
-  CA: [WEC_BANC, WEC_CALN, WEC_LADW, WEC_SDGE, WECC_IID, WECC_SCE]
-  NW: [WECC_ID, WECC_MT, WECC_PNW, WECC_WY]
-  SW: [WECC_AZ, WECC_CO, WECC_NM, WECC_NNV, WECC_SNV, WECC_UT]
-  TX: [ERC_PHDL, ERC_REST, ERC_WEST, ERC_GWAY, ERC_FRNT]
-  CEN: [MIS_AMSO, MIS_AR, MIS_LA, MIS_MO, MIS_WOTA, S_D_AECI, SPP_N, SPP_NEBR, SPP_SPS, SPP_WAUE, SPP_WEST, SPP_KIAM]
-  N_CEN: [MIS_IA, MIS_IL, MIS_INKY, MIS_LMI, MIS_MAPP, MIS_MIDA, MIS_MNWI, MIS_WUMS, PJM_COMD]
-  SE: [FRCC, MIS_D_MS, S_C_KY, S_C_TVA, S_SOU, S_VACA]
-  MID_AT: [PJM_AP, PJM_ATSI, PJM_Dom, PJM_EMAC, PJM_PENE, PJM_SMAC, PJM_West, PJM_WMAC]
-  NE: [NENG_CT, NENG_ME, NENGREST, NY_Z_A, NY_Z_B, NY_Z_C&E, NY_Z_D, NY_Z_F, NY_Z_G-I, NY_Z_J, NY_Z_K]
-  
+  #CA:  [WEC_BANC, WEC_CALN, WEC_LADW, WEC_SDGE, WECC_IID, SWCE]
+  #NW:   [WECC_ID, WECC_MT, WECC_PNW, WECC_WY]
+  #SW:   [WECC_AZ, WECC_CO, NWM, NWNV, SWNV, WECC_UT]
+  #TX:  [ERC_PHDL, ERC_REST, ERC_WEST]
+  #CEN:  [MIS_AMSO, MIS_AR, MIS_LA, MIS_MO, MIS_WOTA, S_D_AECI, SPP_N, SPP_NEBR, SPP_SPS, SPP_WAUE, SPP_WEST]
+  #N_CEN:  [MIS_IA, MIS_IL, MIS_INKY, MIS_LMI, MIS_MAPP, MIS_MIDA, MIS_MNWI, MIS_WUMS, PJM_COMD]
+  #SE:   [FRCC, MIS_D_MS, S_C_KY, S_C_TVA, S_SOU, S_VACA]
+  #MID_AT:  [PJM_AP, PJM_ATSI, PJM_Dom, PJM_EMAC, PJM_PENE, PJM_SMAC, PJM_West, PJM_WMAC]
+  #NE:  [NENG_CT, NENG_ME, NENGREST, NY_Z_A, NY_Z_B, NY_Z_C&E, NY_Z_D, NY_Z_F, NY_Z_G-I, NY_Z_J, NY_Z_K]
+  #US:  [WEC_BANC, WEC_CALN, WEC_LADW, WEC_SDGE, WECC_IID, SWCE, WECC_ID, WECC_MT, WECC_PNW, WECC_WY, WECC_AZ, WECC_CO, NWM, NWNV, SWNV, WECC_UT, ERC_PHDL, ERC_REST, ERC_WEST, ERC_GWAY, MIS_AMSO, MIS_AR, MIS_LA, MIS_MO, MIS_WOTA, S_D_AECI, SPP_N, SPP_NEBR, SPP_SPS, SPP_WAUE, SPP_WEST, MIS_IA, MIS_IL, MIS_INKY, MIS_LMI, MIS_MAPP, MIS_MIDA, MIS_MNWI, MIS_WUMS, PJM_COMD, FRCC, MIS_D_MS, S_C_KY, S_C_TVA, S_SOU, S_VACA, PJM_AP, PJM_ATSI, PJM_Dom, PJM_EMAC, PJM_PENE, PJM_SMAC, PJM_West, PJM_WMAC, NENG_CT, NENG_ME, NENGREST, NY_Z_A, NY_Z_B, NY_Z_C&E, NY_Z_D, NY_Z_F, NY_Z_G-I, NY_Z_J, NY_Z_K]
+  US: [ERC_FRNT,ERC_GWAY,ERC_PHDL,ERC_REST,ERC_WEST,FRCC,MIS_AMSO,MIS_AR,MIS_D_MS,MIS_IA,MIS_IL,MIS_INKY,MIS_LA,MIS_LMI,MIS_MAPP,MIS_MIDA,MIS_MNWI,MIS_MO,MIS_WOTA,MIS_WUMS,NENG_CT,NENG_ME,NENGREST,NY_Z_A,NY_Z_B,NY_Z_C&E,NY_Z_D,NY_Z_F,NY_Z_G-I,NY_Z_J,NY_Z_K,PJM_AP,PJM_ATSI,PJM_COMD,PJM_Dom,PJM_EMAC,PJM_PENE,PJM_SMAC,PJM_West,PJM_WMAC,S_C_KY,S_C_TVA,S_D_AECI,S_SOU,S_VACA,SPP_KIAM,SPP_N,SPP_NEBR,SPP_SPS,SPP_WAUE,SPP_WEST,WEC_BANC,WEC_CALN,WEC_LADW,WEC_SDGE,WECC_AZ,WECC_CO,WECC_ID,WECC_IID,WECC_MT,WECC_NM,WECC_NNV,WECC_PNW,WECC_SCE,WECC_SNV,WECC_UT,WECC_WY]
 # CLUSTERING
 # Existing thermal power plants are clusted to reduce the number of distinct plants.
 # The existing method (for now) is to specify the number of clusters for each type
@@ -594,14 +598,14 @@ cluster_method: kmeans
 
 
 num_clusters:
-  Conventional Steam Coal: 4
-  Natural Gas Fired Combined Cycle: 4
-  Natural Gas Fired Combustion Turbine: 2
-  Nuclear: 2
-  Conventional Hydroelectric: 1
-  Wood/Wood Waste Biomass: 1
-  Natural Gas Internal Combustion Engine: 2
-  Natural Gas Steam Turbine: 2
+  Conventional Steam Coal: 8
+  Natural Gas Fired Combined Cycle: 8
+  Natural Gas Fired Combustion Turbine: 4
+  Nuclear: 6
+  Conventional Hydroelectric: 2
+  Wood/Wood Waste Biomass: 2
+  Natural Gas Internal Combustion Engine: 4
+  Natural Gas Steam Turbine: 4
   Geothermal: 1
   Solar Photovoltaic: 1
   Onshore Wind Turbine: 1
@@ -613,9 +617,9 @@ num_clusters:
   Landfill Gas: 1
   Municipal Solid Waste: 1
   Other Waste Biomass: 1
-  Hydroelectric Pumped Storage: 1
-  Biomass: 1
-  Peaker: 1
+  Hydroelectric Pumped Storage: 2
+  Biomass: 2
+  Peaker: 2
 
 alt_cluster_method: ~
 
@@ -1005,150 +1009,166 @@ pv_ac_dc_ratio: 1.3
 
 renewables_clusters:
   
-  - region: CA
+  # - region: CA
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: CA
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # - region: CA
+  #   technology: offshorewind
+  #   turbine_type: floating
+  #   pref_site: 1
+  #   max_clusters: 1
+  #   max_lcoe: 250
+  # - region: NW
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: NW
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # - region: NW
+  #   technology: offshorewind
+  #   turbine_type: floating
+  #   pref_site: 1
+  #   max_clusters: 1
+  #   max_lcoe: 250
+  # - region: SW
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: SW
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # #- region: SW
+  # #  technology: offshorewind
+  # #  turbine_type: floating
+  # #  pref_site: 1
+  # #  max_clusters: 1
+  # #  max_lcoe: 250
+  # - region: TX
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: TX
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # #- region: TX
+  # #  technology: offshorewind
+  # #  turbine_type: floating
+  # #  pref_site: 1
+  # #  max_clusters: 1
+  # #  max_lcoe: 250
+  # - region: N_CEN
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: N_CEN
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # #- region: N_CEN
+  # #  technology: offshorewind
+  # #  turbine_type: floating
+  # #  pref_site: 1
+  # #  max_clusters: 1
+  # #  max_lcoe: 250
+  # - region: CEN
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: CEN
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # #- region: CEN
+  # #  technology: offshorewind
+  # #  turbine_type: floating
+  # #  pref_site: 1
+  # #  max_clusters: 1
+  # #  max_lcoe: 250
+  # - region: SE
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: SE
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # #- region: SE
+  # #  technology: offshorewind
+  # #  turbine_type: floating
+  # #  pref_site: 1
+  # #  max_clusters: 1
+  # #  max_lcoe: 250
+  # - region: MID_AT
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: MID_AT
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # #- region: MID_AT
+  # #  technology: offshorewind
+  # #  turbine_type: floating
+  # #  pref_site: 1
+  # #  max_clusters: 1
+  # #  max_lcoe: 250
+  # - region: NE
+  #   technology: landbasedwind
+  #   max_clusters: 3
+  #   max_lcoe: 110
+  #   #min_capacity: 25000
+  # - region: NE
+  #   technology: utilitypv
+  #   max_clusters: 3
+  #   max_lcoe: 250
+  #   cap_multiplier: 0.2
+  # - region: NE
+  #   technology: offshorewind
+  #   turbine_type: floating
+  #   pref_site: 1
+  #   max_clusters: 1
+  #   max_lcoe: 250
+  - region: US
     technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
+    max_clusters: 20
+    max_lcoe: 50
     #min_capacity: 25000
-  - region: CA
+  - region: US
     technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
+    max_clusters: 20
+    #min_capacity: 40000
     cap_multiplier: 0.2
-  - region: CA
+  - region: US
     technology: offshorewind
     turbine_type: floating
     pref_site: 1
     max_clusters: 1
-    max_lcoe: 250
-  - region: NW
-    technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
-    #min_capacity: 25000
-  - region: NW
-    technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
-    cap_multiplier: 0.2
-  - region: NW
-    technology: offshorewind
-    turbine_type: floating
-    pref_site: 1
-    max_clusters: 1
-    max_lcoe: 250
-  - region: SW
-    technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
-    #min_capacity: 25000
-  - region: SW
-    technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
-    cap_multiplier: 0.2
-  #- region: SW
-  #  technology: offshorewind
-  #  turbine_type: floating
-  #  pref_site: 1
-  #  max_clusters: 1
-  #  max_lcoe: 250
-  - region: TX
-    technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
-    #min_capacity: 25000
-  - region: TX
-    technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
-    cap_multiplier: 0.2
-  #- region: TX
-  #  technology: offshorewind
-  #  turbine_type: floating
-  #  pref_site: 1
-  #  max_clusters: 1
-  #  max_lcoe: 250
-  - region: N_CEN
-    technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
-    #min_capacity: 25000
-  - region: N_CEN
-    technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
-    cap_multiplier: 0.2
-  #- region: N_CEN
-  #  technology: offshorewind
-  #  turbine_type: floating
-  #  pref_site: 1
-  #  max_clusters: 1
-  #  max_lcoe: 250
-  - region: CEN
-    technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
-    #min_capacity: 25000
-  - region: CEN
-    technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
-    cap_multiplier: 0.2
-  #- region: CEN
-  #  technology: offshorewind
-  #  turbine_type: floating
-  #  pref_site: 1
-  #  max_clusters: 1
-  #  max_lcoe: 250
-  - region: SE
-    technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
-    #min_capacity: 25000
-  - region: SE
-    technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
-    cap_multiplier: 0.2
-  #- region: SE
-  #  technology: offshorewind
-  #  turbine_type: floating
-  #  pref_site: 1
-  #  max_clusters: 1
-  #  max_lcoe: 250
-  - region: MID_AT
-    technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
-    #min_capacity: 25000
-  - region: MID_AT
-    technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
-    cap_multiplier: 0.2
-  #- region: MID_AT
-  #  technology: offshorewind
-  #  turbine_type: floating
-  #  pref_site: 1
-  #  max_clusters: 1
-  #  max_lcoe: 250
-  - region: NE
-    technology: landbasedwind
-    max_clusters: 3
-    max_lcoe: 110
-    #min_capacity: 25000
-  - region: NE
-    technology: utilitypv
-    max_clusters: 3
-    max_lcoe: 250
-    cap_multiplier: 0.2
-  - region: NE
-    technology: offshorewind
-    turbine_type: floating
-    pref_site: 1
-    max_clusters: 1
-    max_lcoe: 250
+    #min_capacity: 40000
 
 
 # How much of the theoretical
@@ -1169,31 +1189,31 @@ startup_fuel_use:
 # cut across EMM regions.
 # See a map at https://www.eia.gov/outlooks/aeo/pdf/nerc_map.pdf
 cost_multiplier_region_map:
-  TRE: [ERC_PHDL, ERC_REST, ERC_WEST, TX]
-  FRCC: [FRCC, SE]
-  MISW: [MIS_WUMS, MIS_MNWI, MIS_IA, CEN]
-  MISE: [MIS_LMI, CEN]
-  PJMC: [PJM_COMD, CEN]
-  MISC: [MIS_IL, MIS_MO, S_D_AECI, MIS_INKY, CEN]
-  SPPN: [MIS_MAPP, SPP_WAUE, SPP_NEBR, MIS_MIDA, N_CEN]
-  SPPC: [SPP_N, N_CEN]
-  SPPS: [SPP_WEST, SPP_SPS, N_CEN]
-  MISS: [MIS_AMSO, MIS_WOTA, MIS_LA, MIS_AR, MIS_D_MS, N_CEN]
-  SRSE: [S_SOU, SE]
-  SRCA: [S_VACA, SE]
-  PJMD: [PJM_Dom, MID_AT]
-  PJMW: [PJM_West, PJM_AP, PJM_ATSI, MID_AT]
-  PJME: [PJM_WMAC, PJM_EMAC, PJM_SMAC, PJM_PENE, MID_AT]
-  SRCE: [S_C_TVA, S_C_KY, SE]
-  NYUP: [NY_Z_A, NY_Z_B, NY_Z_C&E, NY_Z_D, NY_Z_F, NY_Z_G-I,NE]
-  NYCW: [NY_Z_J, NY_Z_K, NE]
-  ISNE: [NENG_ME, NENGREST, NENG_CT, NE]
-  RMRG: [WECC_CO, SW]
-  BASN: [WECC_ID, WECC_WY, WECC_UT, NWNV, NW]
-  NWPP: [WECC_PNW, WECC_MT, NW]
-  CANO: [WEC_CALN, WEC_BANC, CA_N, CA_S, CA]
-  CASO: [WECC_IID, SWCE, WEC_LADW, WEC_SDGE, CA]
-  SRSG: [WECC_AZ, NWM, SWNV, SW]
+  TRE: [ERC_PHDL, ERC_REST, ERC_WEST, TX, US]
+  FRCC: [FRCC, SE, US]
+  MISW: [MIS_WUMS, MIS_MNWI, MIS_IA, CEN, US]
+  MISE: [MIS_LMI, CEN, US]
+  PJMC: [PJM_COMD, CEN, US]
+  MISC: [MIS_IL, MIS_MO, S_D_AECI, MIS_INKY, CEN, US]
+  SPPN: [MIS_MAPP, SPP_WAUE, SPP_NEBR, MIS_MIDA, N_CEN, US]
+  SPPC: [SPP_N, N_CEN, US]
+  SPPS: [SPP_WEST, SPP_SPS, N_CEN, US]
+  MISS: [MIS_AMSO, MIS_WOTA, MIS_LA, MIS_AR, MIS_D_MS, N_CEN, US]
+  SRSE: [S_SOU, SE, US]
+  SRCA: [S_VACA, SE, US]
+  PJMD: [PJM_Dom, MID_AT, US]
+  PJMW: [PJM_West, PJM_AP, PJM_ATSI, MID_AT, US]
+  PJME: [PJM_WMAC, PJM_EMAC, PJM_SMAC, PJM_PENE, MID_AT, US]
+  SRCE: [S_C_TVA, S_C_KY, SE, US]
+  NYUP: [NY_Z_A, NY_Z_B, NY_Z_C&E, NY_Z_D, NY_Z_F, NY_Z_G-I,NE, US]
+  NYCW: [NY_Z_J, NY_Z_K, NE, US]
+  ISNE: [NENG_ME, NENGREST, NENG_CT, NE, US]
+  RMRG: [WECC_CO, SW, US]
+  BASN: [WECC_ID, WECC_WY, WECC_UT, NWNV, NW, US]
+  NWPP: [WECC_PNW, WECC_MT, NW, US]
+  CANO: [WEC_CALN, WEC_BANC, CA_N, CA_S, CA, US]
+  CASO: [WECC_IID, SWCE, WEC_LADW, WEC_SDGE, CA, US]
+  SRSG: [WECC_AZ, NWM, SWNV, SW, US]
 
 # The keys are technologies listed in EIAs 2016 capital cost assumptions document
 # (https://www.eia.gov/analysis/studies/powerplants/capitalcost/pdf/capcost_assumption.pdf)
