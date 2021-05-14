@@ -1155,12 +1155,13 @@ renewables_clusters:
   #   max_lcoe: 250
   - region: US
     technology: landbasedwind
-    max_clusters: 20
+    max_clusters: 40
     max_lcoe: 50
     #min_capacity: 25000
   - region: US
     technology: utilitypv
-    max_clusters: 20
+    max_clusters: 40
+    max_lcoe: 50
     #min_capacity: 40000
     cap_multiplier: 0.2
   - region: US
