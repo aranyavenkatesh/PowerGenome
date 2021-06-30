@@ -10,7 +10,7 @@ SELECT * FROM technology_costs_nrelatb
 	(parameter='capex_mw' OR 
 	parameter='fixed_o_m_mw' OR
 	parameter='variable_o_m_mwh' OR
-	parameter='wacc_nominal')
+	parameter='wacc_real')
 	ORDER BY parameter
 	
 
@@ -26,7 +26,7 @@ SELECT * FROM technology_costs_nrelatb
 	(parameter='capex_mw' OR 
 	parameter='fixed_o_m_mw' OR
 	parameter='variable_o_m_mwh' OR
-	parameter='wacc_nominal'  OR
+	parameter='wacc_real'  OR
 	parameter='cf')
 	ORDER BY parameter
 	
